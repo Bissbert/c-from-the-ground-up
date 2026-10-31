@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.impeccable/review/
+.DS_Store
+.impeccable/hook.cache.json

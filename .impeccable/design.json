@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-31T00:00:00Z",
+  "title": "Design System: C, from the ground up",
+  "extensions": {
+    "colorMeta": {
+      "form-green": { "role": "primary", "displayName": "Form Green", "canonical": "#1f6b4f", "tonalRamp": ["#0c2a1f", "#123f2f", "#17533d", "#1f6b4f", "#3f8a6c", "#7cc9a3", "#cfe3d6", "#e3eee6"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#f4f6f1", "tonalRamp": ["#0b120e", "#0f1713", "#142019", "#2b4537", "#93a39a", "#edf2ec", "#f4f6f1", "#fafbf8"] },
+      "graphite": { "role": "neutral", "displayName": "Graphite", "canonical": "#2b2e2c", "tonalRamp": ["#1a1c1b", "#2b2e2c", "#48544d", "#5c6a62", "#8a9a91", "#b2c1b8", "#dde6e0", "#f0f4f1"] },
+      "red-pencil": { "role": "tertiary", "displayName": "Red Pencil", "canonical": "#b3261e", "tonalRamp": ["#3a1a17", "#6b1b15", "#8f201a", "#b3261e", "#d2554c", "#ff8f85", "#f3c6c1", "#f8e4e1"] },
+      "ochre": { "role": "tertiary", "displayName": "Ochre", "canonical": "#855600", "tonalRamp": ["#33280f", "#5a3c00", "#704900", "#855600", "#a8761f", "#e8bb62", "#efd9a8", "#f5ead2"] },
+      "highlighter": { "role": "tertiary", "displayName": "Highlighter", "canonical": "#fff2b0", "tonalRamp": ["#3d3612", "#5e5320", "#8a7c35", "#c2b058", "#e6d57e", "#f7e79a", "#fff2b0", "#fff9db"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Form Display", "purpose": "Lesson and home titles, Archivo condensed 75%." },
+      "label": { "displayName": "Printed Label", "purpose": "Form fields, column heads, buttons; uppercase condensed." },
+      "body": { "displayName": "Reading", "purpose": "Theory text at a 44rem measure." },
+      "code": { "displayName": "Code", "purpose": "Editors, addresses, statement numbers; slashed zero." }
+    },
+    "shadows": [
+      { "name": "sheet-lift", "value": "0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent), 0 6px 18px -10px color-mix(in srgb, var(--ink) 18%, transparent)", "purpose": "Exercise boxes only." },
+      { "name": "fold", "value": "-1px 1px 1px color-mix(in srgb, var(--ink) 18%, transparent)", "purpose": "Folded corner marking where the learner stopped." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The solved check-mark draw, the single authored motion moment." }
+    ],
+    "breakpoints": [
+      { "name": "ident-folds", "value": "1280px" },
+      { "name": "rail-drawer", "value": "960px" },
+      { "name": "compact", "value": "560px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action: Check, Run, Continue.",
+      "html": "<button class=\"ds-btn-primary\"><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>Check</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:.45rem;min-height:2.5rem;padding:.4rem 1rem;border:1px solid transparent;border-radius:3px;background:#1f6b4f;color:#f4f6f1;font-family:Archivo,'Arial Narrow',sans-serif;font-stretch:85%;font-weight:650;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s}.ds-btn-primary:hover{background:#17533d}.ds-btn-primary:focus-visible{outline:2px solid #1f6b4f;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Supporting action: Hint, Show a solution.",
+      "html": "<button class=\"ds-btn-secondary\">Hint</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;min-height:2.5rem;padding:.4rem 1rem;border:1px solid #1f6b4f;border-radius:3px;background:transparent;color:#17533d;font-family:Archivo,'Arial Narrow',sans-serif;font-stretch:85%;font-weight:650;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.ds-btn-secondary:hover{background:#e3eee6}.ds-btn-secondary:focus-visible{outline:2px solid #1f6b4f;outline-offset:2px}"
+    },
+    {
+      "name": "Blank",
+      "kind": "input",
+      "refersTo": "blank-input",
+      "description": "Fill-in blank inside code or a memory diagram.",
+      "html": "<input class=\"ds-blank\" value=\"0x2004\" aria-label=\"blank\">",
+      "css": ".ds-blank{width:6ch;padding:.1rem .3rem;border:0;border-bottom:1.5px solid #1f6b4f;border-radius:1px;background:#fff2b0;color:#2b2e2c;font-family:'Atkinson Hyperlegible Mono',ui-monospace,monospace;font-size:.9375rem}.ds-blank:focus-visible{outline:2px solid #1f6b4f;outline-offset:1px}"
+    },
+    {
+      "name": "Rail Row",
+      "kind": "nav",
+      "description": "Statement-number rail entry with progress mark.",
+      "html": "<a class=\"ds-rail-row is-active\" href=\"#\"><span class=\"ds-rail-no\">10</span><span class=\"ds-rail-title\">Arrays</span><span class=\"ds-rail-mark\"></span></a>",
+      "css": ".ds-rail-row{display:grid;grid-template-columns:3rem 1fr 1.75rem;align-items:center;min-height:2.5rem;color:#2b2e2c;text-decoration:none;border-bottom:1px solid #cfe3d6;font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif;font-size:.92rem;width:15.5rem;background:#f4f6f1}.ds-rail-row:hover{background:#e3eee6}.ds-rail-no{align-self:stretch;display:grid;place-items:center;font-family:'Atkinson Hyperlegible Mono',monospace;color:#1f6b4f;border-right:1px solid #cfe3d6}.ds-rail-row.is-active .ds-rail-no{background:#1f6b4f;color:#f4f6f1}.ds-rail-row.is-active .ds-rail-title{font-weight:700}.ds-rail-title{padding-left:.75rem}.ds-rail-mark{width:1rem;height:1rem;border:1.5px solid #1f6b4f;border-radius:1px}"
+    },
+    {
+      "name": "Exercise Header",
+      "kind": "card",
+      "refersTo": "exercise-box",
+      "description": "Exercise box head: sequence cell, title, solved box.",
+      "html": "<div class=\"ds-ex\"><div class=\"ds-ex-head\"><span class=\"ds-ex-no\">05.3</span><span class=\"ds-ex-title\">Addresses in a row</span><span class=\"ds-ex-mark\"></span></div><div class=\"ds-ex-body\">Fill in the missing addresses.</div></div>",
+      "css": ".ds-ex{border:1px solid #1f6b4f;border-radius:3px;background:#fafbf8;box-shadow:0 1px 2px rgba(43,46,44,.06),0 6px 18px -10px rgba(43,46,44,.18);max-width:28rem;font-family:'Atkinson Hyperlegible Next',system-ui,sans-serif;color:#2b2e2c}.ds-ex-head{display:flex;align-items:center;border-bottom:1px solid #1f6b4f}.ds-ex-no{background:#1f6b4f;color:#f4f6f1;padding:.9rem 1rem;font-family:'Atkinson Hyperlegible Mono',monospace}.ds-ex-title{flex:1;padding:0 1rem;font-weight:700}.ds-ex-mark{width:1rem;height:1rem;margin-right:1rem;border:1.5px solid #1f6b4f;border-radius:1px}.ds-ex-body{padding:1rem}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Coding Form",
+    "overview": "The course is drawn as an IBM-style 80-column coding form: the pre-printed green sheet programmers wrote code on by hand before it was punched onto cards. The metaphor gives a beginner a physical, orderly place to put code, and it suits a course about how things sit in memory, cell by cell.\n\nReading is paper and graphite. Everything printed on the form is form green: the masthead fields, the 1–80 column ruler, the statement-number rail, cell rules and field labels. Two further marks appear only with meaning. A red pencil means a compiler error or a failed test. A yellow highlighter marks the memory cell or blank that matters right now. Density is calm (Read mode), and the exercises are an Operate core inside it.",
+    "keyCharacteristics": [
+      "A pre-printed form frame (masthead fields, column ruler, statement numbers, identification margin)",
+      "Paper and graphite for reading; green only for the printed form",
+      "Red and the highlighter carry meaning and are never decoration",
+      "Memory, code and exercises are drawn as ruled form cells",
+      "A single motion moment: the solved check mark draws itself"
+    ],
+    "rules": [
+      { "name": "The Red Pencil Rule", "body": "Red appears only when the compiler or a test says something is wrong. It is never decoration, emphasis or branding.", "section": "colors" },
+      { "name": "The Mark, Not Hue Rule", "body": "Progress is shown by a mark (empty box, pencil tick, filled check, folded corner), never by colour alone.", "section": "colors" },
+      { "name": "The Printed Label Rule", "body": "Uppercase condensed Archivo is reserved for things printed on the form (fields, columns, buttons). It never sits above a heading as an eyebrow.", "section": "typography" }
+    ],
+    "dos": [
+      "Do draw every new piece of frame furniture in Form Green (#1f6b4f) with 1px rules.",
+      "Do show state with marks (box, tick, check, fold) as well as colour.",
+      "Do keep reading text in Atkinson Hyperlegible Next at a 44rem measure.",
+      "Do honour prefers-reduced-motion; the check-mark draw is the only authored motion."
+    ],
+    "donts": [
+      "Don't use red for anything but compiler errors and failed tests.",
+      "Don't put eyebrow labels above headings, thick side-stripe callouts, gradient text or emoji.",
+      "Don't round corners beyond 3px."
+    ]
+  }
+}

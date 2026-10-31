@@ -1,0 +1,23 @@
+{
+  "title": "C, from the ground up",
+  "lessons": [
+    { "file": "01-first-program.md", "part": "Getting started" },
+    { "file": "02-variables-and-int.md", "part": "Getting started" },
+    { "file": "03-arithmetic.md", "part": "Getting started" },
+    { "file": "04-types-and-sizes.md", "part": "Getting started" },
+    { "file": "05-memory-and-addresses.md", "part": "Memory" },
+    { "file": "06-reading-input.md", "part": "Memory" },
+    { "file": "07-decisions.md", "part": "Control flow" },
+    { "file": "08-loops.md", "part": "Control flow" },
+    { "file": "09-functions.md", "part": "Control flow" },
+    { "file": "10-arrays.md", "part": "Data in memory" },
+    { "file": "11-pointers.md", "part": "Data in memory" },
+    { "file": "12-pointers-and-arrays.md", "part": "Data in memory" },
+    { "file": "13-strings.md", "part": "Data in memory" },
+    { "file": "14-structs.md", "part": "Building your own types" },
+    { "file": "15-pointers-to-structs.md", "part": "Building your own types" },
+    { "file": "16-dynamic-memory.md", "part": "Building your own types" },
+    { "file": "17-constants-enums-preprocessor.md", "part": "Building your own types" },
+    { "file": "18-linked-lists.md", "part": "Putting it together" }
+  ]
+}

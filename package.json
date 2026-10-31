@@ -1,0 +1,16 @@
+{
+  "name": "c-from-the-ground-up",
+  "version": "1.0.0",
+  "description": "A local, self-paced course on programming in C with a real compiler running in the browser.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node tools/check-lessons.mjs",
+    "build": "node tools/build-static.mjs"
+  },
+  "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.4.2",
+    "@yowasp/clang": "^22.0.0-git20542-10"
+  }
+}

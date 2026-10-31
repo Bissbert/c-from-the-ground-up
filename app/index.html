@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>C, from the ground up</title>
+    <meta name="description" content="A beginner's course in C programming: from variables and memory addresses to pointers, structs and linked lists, with exercises checked by a real compiler in your browser." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="fonts/AtkinsonHyperlegibleNext-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/AtkinsonHyperlegibleMono-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <script>
+      try {
+        const s = JSON.parse(localStorage.getItem('c-ground-up:v1') || '{}');
+        if (s.theme) document.documentElement.dataset.theme = s.theme;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#view">Skip to content</a>
+    <header class="masthead">
+      <div class="mast-row">
+        <button class="icon-btn rail-toggle" id="rail-toggle" type="button" aria-label="Show lessons" aria-controls="rail">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg></span>
+        </button>
+        <a class="brand" href="#/"><span class="brand-c">C</span><span class="brand-rest">from the ground up</span></a>
+        <dl class="form-fields">
+          <div class="field field-program"><dt>Program</dt><dd id="f-program">—</dd></div>
+          <div class="field"><dt>Lesson</dt><dd id="f-lesson">—</dd></div>
+          <div class="field field-card"><dt>Card</dt><dd id="f-card">—</dd></div>
+          <div class="field field-compiler"><dt>Compiler</dt><dd id="f-compiler" data-state="idle">Idle</dd></div>
+        </dl>
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme"></button>
+      </div>
+      <div class="ruler" id="ruler" aria-hidden="true"></div>
+    </header>
+    <div class="layout">
+      <nav class="rail" id="rail" aria-label="Lessons"></nav>
+      <main id="view" tabindex="-1"><p class="loading-sheet">Loading the course…</p></main>
+      <aside class="ident" id="ident" hidden></aside>
+    </div>
+    <dialog id="confirm-reset" class="dialog">
+      <form method="dialog">
+        <h2>Reset all progress?</h2>
+        <p>This clears every solved mark and every piece of code you wrote in the exercises. It cannot be undone.</p>
+        <div class="toolbar">
+          <button class="btn btn-danger" value="reset">Reset progress</button>
+          <button class="btn btn-quiet" value="cancel" autofocus>Keep my progress</button>
+        </div>
+      </form>
+    </dialog>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
