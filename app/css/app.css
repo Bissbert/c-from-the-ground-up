@@ -1,6 +1,6 @@
-/* C, from the ground up — the coding-form sheet.
-   Paper and graphite for reading; printed form-green for every piece of frame furniture;
-   red pencil only for compiler errors; a highlighter only for the memory cell that matters. */
+/* C, from the ground up — base structure: layout, lesson blocks, exercises, editor, console.
+   The look itself (tokens, type, the terminal frame) comes from terminal.css, which overrides
+   these defaults for :root[data-look='terminal']. */
 
 :root {
   --paper: #f4f6f1;
@@ -32,9 +32,9 @@
   --tk-pre: #5d4596;
   --tk-fn: #2b2e2c;
 
-  --font-read: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
-  --font-code: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
-  --font-form: 'Archivo', 'Arial Narrow', sans-serif;
+  --font-read: 'JetBrains Mono', ui-monospace, monospace;
+  --font-code: 'JetBrains Mono', ui-monospace, monospace;
+  --font-form: 'VT323', ui-monospace, monospace;
 
   --code-size: 0.9375rem;
   --code-lh: 1.5rem;
@@ -47,70 +47,6 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --paper: #0f1713;
-    --paper-raised: #142019;
-    --paper-sunk: #0b120e;
-    --form: #7cc9a3;
-    --form-strong: #9ad8b9;
-    --form-soft: #2b4537;
-    --form-faint: #18271f;
-    --ink: #dde6e0;
-    --ink-2: #b2c1b8;
-    --ink-3: #93a39a;
-    --mast-bg: #15342a;
-    --mast-ink: #dde6e0;
-    --mast-ink-2: #9cc7b0;
-    --mast-rule: #2d5a47;
-    --on-form: #0f1713;
-    --red: #ff8f85;
-    --red-soft: #3a1a17;
-    --warn: #e8bb62;
-    --warn-soft: #33280f;
-    --hot: #3d3612;
-    --tk-kw: #8fd5b2;
-    --tk-type: #8cc4e8;
-    --tk-str: #e3b47a;
-    --tk-num: #e79cc3;
-    --tk-com: #8a9a91;
-    --tk-pre: #b9a5ef;
-    --tk-fn: #dde6e0;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme='dark'] {
-  --paper: #0f1713;
-  --paper-raised: #142019;
-  --paper-sunk: #0b120e;
-  --form: #7cc9a3;
-  --form-strong: #9ad8b9;
-  --form-soft: #2b4537;
-  --form-faint: #18271f;
-  --ink: #dde6e0;
-  --ink-2: #b2c1b8;
-  --ink-3: #93a39a;
-  --mast-bg: #15342a;
-  --mast-ink: #dde6e0;
-  --mast-ink-2: #9cc7b0;
-  --mast-rule: #2d5a47;
-  --on-form: #0f1713;
-  --red: #ff8f85;
-  --red-soft: #3a1a17;
-  --warn: #e8bb62;
-  --warn-soft: #33280f;
-  --hot: #3d3612;
-  --tk-kw: #8fd5b2;
-  --tk-type: #8cc4e8;
-  --tk-str: #e3b47a;
-  --tk-num: #e79cc3;
-  --tk-com: #8a9a91;
-  --tk-pre: #b9a5ef;
-  --tk-fn: #dde6e0;
-  color-scheme: dark;
 }
 
 /* ---------- base ---------- */

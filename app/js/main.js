@@ -7,6 +7,7 @@ import { createEditor } from './editor.js';
 import { createConsole } from './console.js';
 import * as compiler from './compiler.js';
 import { progress } from './progress.js';
+import * as terminal from './terminal.js';
 
 const view = document.getElementById('view');
 const rail = document.getElementById('rail');
@@ -20,6 +21,12 @@ const fields = {
 
 let course = null; // { title, lessons: [{ file, part, number, meta, sections, exercises: [ids] }] }
 let sectionObserver = null;
+let ctx = null; // what the terminal frame (terminal.js) gets to work with; built once the course is loaded
+
+// The terminal frame supplies the home page, the lesson header and the window bar / status line.
+function layout() {
+  return terminal;
+}
 
 // ---------- course ----------
 
@@ -132,6 +139,13 @@ function renderHome() {
     current.lessons.push(l);
   }
 
+  const custom = layout()?.home?.(ctx);
+  if (custom) {
+    view.replaceChildren(custom);
+    window.scrollTo(0, 0);
+    return;
+  }
+
   const sheet = h(
     'div',
     { class: 'home' },
@@ -219,7 +233,7 @@ function renderLesson(id, sectionId) {
   setFields({ program: meta.title, lesson: lesson.number, card: `${lesson.number} of ${pad2(course.lessons.length)}` });
   document.title = `${lesson.number} ${meta.title} · ${course.title}`;
 
-  const header = h(
+  const header = layout()?.lessonHead?.(ctx, lesson) || h(
     'header',
     { class: 'lesson-head' },
     h('h1', { class: 'display' }, meta.title),
@@ -417,7 +431,21 @@ function route() {
     renderHome();
     renderRail(null);
   }
+  renderChrome();
   view.focus({ preventScroll: true });
+}
+
+// The terminal frame's window bar is rebuilt on every route; everything it adds carries the class look-chrome.
+function renderChrome() {
+  document.querySelectorAll('.look-chrome').forEach((el) => el.remove());
+  layout()?.chrome?.(ctx, currentRoute());
+}
+
+function currentRoute() {
+  const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+  if (parts[0] === 'lesson' && parts[1]) return { kind: 'lesson', lesson: course.lessons.find((l) => l.meta.id === parts[1]) || null, section: parts[2] || null };
+  if (parts[0] === 'playground') return { kind: 'playground' };
+  return { kind: 'home' };
 }
 
 function setRailOpen(open) {
@@ -425,18 +453,6 @@ function setRailOpen(open) {
   const t = document.getElementById('rail-toggle');
   t.setAttribute('aria-expanded', String(open));
   t.setAttribute('aria-label', open ? 'Hide lessons' : 'Show lessons');
-}
-
-// ---------- theme ----------
-
-function applyTheme(t) {
-  if (t) document.documentElement.dataset.theme = t;
-  else delete document.documentElement.dataset.theme;
-  const dark = t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-  const btn = document.getElementById('theme-toggle');
-  btn.replaceChildren(icon(dark ? 'sun' : 'moon'));
-  btn.setAttribute('aria-label', dark ? 'Switch to light paper' : 'Switch to dark carbon');
-  btn.title = btn.getAttribute('aria-label');
 }
 
 // ---------- ruler ----------
@@ -454,14 +470,6 @@ function buildRuler() {
 
 async function boot() {
   buildRuler();
-  applyTheme(progress.theme());
-  document.getElementById('theme-toggle').addEventListener('click', () => {
-    const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-    const t = dark ? 'light' : 'dark';
-    progress.setTheme(t);
-    applyTheme(t);
-  });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyTheme(progress.theme()));
   const railToggle = document.getElementById('rail-toggle');
   railToggle.addEventListener('click', () => setRailOpen(!document.body.classList.contains('rail-open')));
   document.addEventListener('keydown', (e) => e.key === 'Escape' && document.body.classList.contains('rail-open') && (setRailOpen(false), railToggle.focus()));
@@ -488,7 +496,9 @@ async function boot() {
       const lesson = course.lessons.find((l) => l.meta.id === parts[1]);
       if (lesson) refreshAsideTallies(lesson);
     }
+    renderChrome();
   });
+  ctx = { course, progress, lessonState, tallyMarks, resetProgress, setRailOpen, h, icon, inline, pad2 };
   window.addEventListener('hashchange', route);
   route();
   // Load the compiler in the background so the first Run is quick.

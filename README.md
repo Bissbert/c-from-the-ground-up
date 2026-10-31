@@ -22,7 +22,7 @@ npm start
 
 Open <http://127.0.0.1:5173>.
 
-The first visit downloads the compiler, about 105 MB served from your own machine. You can watch the progress in the masthead under COMPILER. After that the browser caches it.
+The first visit downloads the compiler, about 105 MB served from your own machine. You can watch the progress in the status line at the bottom of the screen, which reads `clang ready` once it is done. After that the browser caches it.
 
 ### With Docker
 
@@ -54,7 +54,7 @@ Each program targets `wasm32-wasi`:
 
 The lessons say this where it matters.
 
-Progress, drafts and the theme choice are saved in your browser's `localStorage`. You can reset them from the bottom of the contents page.
+Progress and drafts are saved in your browser's `localStorage`. You can reset them with `rm -rf ~/.progress` at the bottom of the home page.
 
 ## Checking the lessons
 

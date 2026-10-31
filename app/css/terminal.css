@@ -1,0 +1,967 @@
+/* TERMINAL — after bissbert.ch.
+   The course looks like one shell session: tmux window bar on top, a neofetch home, lessons
+   `cat`-ed into the scrollback and a vim-style status line at the bottom. Nothing is typed
+   into the frame itself: navigation is all links. Pixel type for the
+   frame, a crisp mono for reading, ANSI colours, CRT scanlines (no glow). */
+
+:root[data-look='terminal'] {
+  --paper: #0b0c0b;
+  --paper-raised: #111411;
+  --paper-sunk: #070807;
+  --form: #3ddc4a;
+  --form-strong: #7cf08a;
+  --form-soft: #24402a;
+  --form-faint: #142017;
+  --ink: #dbe9d8;
+  --ink-2: #b2c7af;
+  --ink-3: #8ba487;
+  --on-form: #071007;
+  --cyan: #2cb2ff;
+  --amber: #ffb000;
+  --magenta: #c879ff;
+  --red: #ff5f56;
+  --red-soft: #2e1210;
+  --warn: #ffb000;
+  --warn-soft: #261d07;
+  --hot: #3b3305;
+  --tk-kw: #c879ff;
+  --tk-type: #2cb2ff;
+  --tk-str: #ffb000;
+  --tk-num: #ff7ab8;
+  --tk-com: #7c977a;
+  --tk-pre: #22d3c5;
+  --tk-fn: #dbe9d8;
+  --font-read: 'JetBrains Mono', ui-monospace, monospace;
+  --font-code: 'JetBrains Mono', ui-monospace, monospace;
+  --font-form: 'VT323', ui-monospace, monospace;
+  --font-pixel: 'VT323', ui-monospace, monospace;
+  --radius: 0;
+  --measure: 46rem;
+  --mast-h: 2.25rem;
+  --t-shell-h: 1.85rem;
+  color-scheme: dark;
+}
+
+/* ---------- screen ---------- */
+
+:root[data-look='terminal'] body {
+  font: 400 0.95rem/1.75 var(--font-read);
+  padding-bottom: var(--t-shell-h);
+}
+:root[data-look='terminal'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.22) 2px 3px);
+}
+:root[data-look='terminal'] ::selection {
+  background: var(--form);
+  color: var(--on-form);
+}
+:root[data-look='terminal'] :focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+:root[data-look='terminal'] a {
+  color: var(--cyan);
+  text-decoration-color: color-mix(in srgb, var(--cyan) 45%, transparent);
+}
+:root[data-look='terminal'] code {
+  background: none;
+  color: var(--amber);
+  padding: 0;
+}
+:root[data-look='terminal'] strong {
+  color: #fff;
+}
+
+/* The old frame stays in the DOM (main.js writes to it) but the shell replaces it. */
+:root[data-look='terminal'] .masthead,
+:root[data-look='terminal'] .rail {
+  display: none;
+}
+:root[data-look='terminal'] .layout {
+  grid-template-columns: minmax(0, 1fr) 17rem;
+  min-height: 0;
+}
+:root[data-look='terminal'] #view {
+  grid-column: 1;
+  padding: 2rem clamp(1rem, 4vw, 3.5rem) 4rem;
+}
+:root[data-look='terminal'] #view > * {
+  max-width: var(--measure);
+}
+:root[data-look='terminal'] #view > .t-home {
+  max-width: 64rem;
+}
+:root[data-look='terminal'] html {
+  scroll-padding-top: 3.5rem;
+}
+
+/* ---------- tmux window bar ---------- */
+
+:root[data-look='terminal'] .t-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: var(--mast-h);
+  padding: 0 0.75rem;
+  background: var(--form);
+  color: var(--on-form);
+  font: 400 1.37rem/1 var(--font-pixel);
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+:root[data-look='terminal'] .t-session {
+  padding-right: 0.5rem;
+}
+:root[data-look='terminal'] .t-win {
+  color: var(--on-form);
+  text-decoration: none;
+  padding: 0.3rem 0.5rem;
+}
+:root[data-look='terminal'] .t-win:hover {
+  background: color-mix(in srgb, var(--on-form) 15%, transparent);
+}
+:root[data-look='terminal'] .t-win.is-active {
+  background: var(--on-form);
+  color: var(--form);
+}
+:root[data-look='terminal'] .t-win-n {
+  opacity: 0.7;
+}
+:root[data-look='terminal'] .t-bar-gap {
+  flex: 1;
+}
+:root[data-look='terminal'] .t-bracket {
+  appearance: none;
+  border: 1px solid var(--on-form);
+  background: none;
+  color: var(--on-form);
+  font: inherit;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.15rem 0.6rem;
+  cursor: pointer;
+}
+:root[data-look='terminal'] .t-bracket::before {
+  content: '[ ';
+}
+:root[data-look='terminal'] .t-bracket::after {
+  content: ' ]';
+}
+:root[data-look='terminal'] .t-bracket:hover {
+  background: var(--on-form);
+  color: var(--form);
+}
+
+/* ---------- shared shell bits ---------- */
+
+:root[data-look='terminal'] .t-echo {
+  font-family: var(--font-pixel);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--form);
+  margin: 0 0 1rem;
+  overflow-wrap: anywhere;
+}
+:root[data-look='terminal'] .t-user {
+  color: var(--form);
+}
+:root[data-look='terminal'] .t-path {
+  color: var(--magenta);
+}
+:root[data-look='terminal'] .t-cmd {
+  color: var(--amber);
+}
+:root[data-look='terminal'] .t-dim {
+  color: var(--ink-3);
+}
+:root[data-look='terminal'] .t-h2 {
+  font: 400 1.69rem/1.2 var(--font-pixel);
+  color: var(--form);
+  margin: 0 0 0.75rem;
+  border: 0;
+  padding: 0;
+}
+
+/* ---------- home: neofetch ---------- */
+
+:root[data-look='terminal'] .t-fetch {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.5rem clamp(1.5rem, 5vw, 4rem);
+  margin-bottom: 3.5rem;
+}
+:root[data-look='terminal'] .t-art {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 1.75rem;
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .t-art pre {
+  font-family: var(--font-code);
+  line-height: 1.05;
+}
+:root[data-look='terminal'] .t-logo {
+  /* Steps, not a fluid clamp: JetBrains Mono cells are 0.6em wide, so sizes in multiples of 5px
+     keep every █ on whole pixels and the blocks join without hairline seams. */
+  font-size: 40px;
+  font-weight: 700;
+  /* The cells still land on half pixels (centred column), so neighbouring █ antialias into faint
+     seams; a 1px same-colour offset closes them without visibly thickening the strokes. */
+  text-shadow: 0.6px 0 0 currentColor;
+}
+@media (max-width: 1100px) {
+  :root[data-look='terminal'] .t-logo {
+    font-size: 30px;
+  }
+}
+:root[data-look='terminal'] .t-chip {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .t-name {
+  font: 400 clamp(3rem, 6.5vw, 4.5rem)/0.95 var(--font-pixel);
+  color: var(--form);
+  margin: 0;
+}
+:root[data-look='terminal'] .t-host {
+  font: 400 1.62rem/1.3 var(--font-pixel);
+  color: var(--cyan);
+  margin: 0.4rem 0 0;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--form);
+  max-width: 28rem;
+}
+:root[data-look='terminal'] .t-facts {
+  margin: 0.9rem 0 1rem;
+  font-family: var(--font-pixel);
+  font-size: 1.5rem;
+  line-height: 1.2;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--form);
+  max-width: 28rem;
+}
+:root[data-look='terminal'] .t-fact {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+}
+:root[data-look='terminal'] .t-fact dt {
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .t-fact dd {
+  margin: 0;
+  color: var(--form);
+}
+:root[data-look='terminal'] .t-meter {
+  display: inline-block;
+  vertical-align: middle;
+  width: 6rem;
+  height: 0.7rem;
+  border: 1px solid var(--form);
+}
+:root[data-look='terminal'] .t-meter span {
+  display: block;
+  height: 100%;
+  background: var(--form);
+}
+:root[data-look='terminal'] .t-welcome {
+  font: 400 1.56rem/1.4 var(--font-pixel);
+  color: var(--form);
+  margin: 0 0 0.25rem;
+}
+:root[data-look='terminal'] .t-lede {
+  color: var(--ink-2);
+  margin: 0 0 1rem;
+  max-width: 36rem;
+}
+:root[data-look='terminal'] .t-try {
+  font: 400 1.56rem/1.5 var(--font-pixel);
+  color: var(--form);
+  margin: 0 0 1.25rem;
+}
+:root[data-look='terminal'] .t-try a {
+  color: var(--on-form);
+  background: var(--amber);
+  text-decoration: none;
+  padding: 0 0.4rem;
+}
+:root[data-look='terminal'] .t-try a:hover {
+  background: var(--form);
+}
+:root[data-look='terminal'] .t-swatches {
+  display: flex;
+}
+:root[data-look='terminal'] .t-swatches span {
+  width: 1.6rem;
+  height: 1rem;
+}
+:root[data-look='terminal'] .t-swatches span:first-child {
+  outline: 1px solid var(--form-soft);
+  outline-offset: -1px;
+}
+
+:root[data-look='terminal'] .t-block {
+  margin-bottom: 3.5rem;
+}
+:root[data-look='terminal'] .t-ls {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+}
+:root[data-look='terminal'] .t-comment {
+  font: 400 1.43rem/1 var(--font-pixel);
+  color: var(--ink-3);
+  margin: 1.25rem 0 0.35rem;
+}
+:root[data-look='terminal'] .t-ls li:first-child {
+  margin-top: 0;
+}
+:root[data-look='terminal'] .t-row {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr) 3rem auto;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.1rem 0.5rem;
+  margin-left: -0.5rem;
+  text-decoration: none;
+  color: var(--form);
+}
+:root[data-look='terminal'] .t-row-cmd {
+  color: var(--amber);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:root[data-look='terminal'] .t-row-min {
+  color: var(--ink-3);
+  text-align: right;
+}
+:root[data-look='terminal'] .t-row-bar {
+  color: var(--ink-3);
+  letter-spacing: -0.05em;
+}
+:root[data-look='terminal'] .t-row.is-partial .t-row-bar {
+  color: var(--amber);
+}
+:root[data-look='terminal'] .t-row.is-done .t-row-bar {
+  color: var(--form);
+}
+:root[data-look='terminal'] .t-row:hover,
+:root[data-look='terminal'] .t-row:focus-visible {
+  background: var(--form);
+  outline: none;
+}
+:root[data-look='terminal'] .t-row:hover *,
+:root[data-look='terminal'] .t-row:focus-visible * {
+  color: var(--on-form);
+}
+
+:root[data-look='terminal'] .t-readme ul {
+  margin: 0 0 1.5rem;
+  padding-left: 1.25rem;
+  list-style: '* ';
+}
+:root[data-look='terminal'] .t-readme li {
+  margin-bottom: 0.4rem;
+  color: var(--ink-2);
+}
+:root[data-look='terminal'] .t-readme li::marker {
+  color: var(--form);
+}
+
+/* ---------- buttons: [ LIKE THIS ] ---------- */
+
+:root[data-look='terminal'] .btn {
+  min-height: 2.25rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid transparent;
+  font: 400 1.43rem/1 var(--font-pixel);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: none;
+  color: var(--form);
+}
+:root[data-look='terminal'] .btn::before {
+  content: '[';
+  margin-right: 0.2rem;
+}
+:root[data-look='terminal'] .btn::after {
+  content: ']';
+  margin-left: 0.2rem;
+}
+:root[data-look='terminal'] .btn .icon {
+  display: none;
+}
+:root[data-look='terminal'] .btn:hover {
+  background: var(--form-faint);
+  color: var(--form-strong);
+}
+:root[data-look='terminal'] .btn-primary {
+  background: var(--form);
+  color: var(--on-form);
+}
+:root[data-look='terminal'] .btn-primary:hover {
+  background: var(--form-strong);
+  color: var(--on-form);
+}
+:root[data-look='terminal'] .btn-secondary {
+  border-color: var(--form);
+}
+:root[data-look='terminal'] .btn-quiet {
+  color: var(--ink-2);
+}
+:root[data-look='terminal'] .btn-danger,
+:root[data-look='terminal'] .t-danger {
+  color: var(--red);
+}
+:root[data-look='terminal'] .btn:disabled {
+  opacity: 0.45;
+}
+:root[data-look='terminal'] .linklike {
+  color: var(--cyan);
+  font-family: var(--font-code);
+}
+
+/* ---------- lesson: `cat 05-….md` ---------- */
+
+:root[data-look='terminal'] .t-lesson-head {
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed var(--form-soft);
+}
+:root[data-look='terminal'] .display {
+  font: 400 clamp(2.6rem, 6vw, 3.9rem)/1 var(--font-pixel);
+  color: var(--form);
+  margin: 0 0 0.75rem;
+}
+:root[data-look='terminal'] .t-hash {
+  color: var(--ink-3);
+}
+:root[data-look='terminal'] .lede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--tk-com);
+  font-style: italic;
+  max-width: none;
+}
+:root[data-look='terminal'] .t-slashes {
+  font-style: normal;
+}
+:root[data-look='terminal'] .t-meta {
+  margin: 0 0 1.5rem;
+  display: grid;
+  gap: 0.05rem;
+}
+:root[data-look='terminal'] .t-meta > div {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+}
+:root[data-look='terminal'] .t-meta dt {
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .t-meta dd {
+  margin: 0;
+  color: var(--ink);
+}
+:root[data-look='terminal'] .t-goals ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+:root[data-look='terminal'] .t-goals li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  color: var(--ink-2);
+}
+:root[data-look='terminal'] .t-box {
+  color: var(--amber);
+  white-space: pre;
+}
+
+:root[data-look='terminal'] .lesson-section > h2,
+:root[data-look='terminal'] .part-title {
+  font: 400 2.08rem/1.2 var(--font-pixel);
+  color: var(--amber);
+  border-top: 0;
+  padding-top: 0;
+  margin: 0 0 1rem;
+}
+:root[data-look='terminal'] .lesson-section > h2::before {
+  content: '## ';
+  color: var(--ink-3);
+}
+:root[data-look='terminal'] .lesson-section h3:not(.ex-title) {
+  font: 400 1.62rem/1.3 var(--font-pixel);
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .lesson-section h3:not(.ex-title)::before {
+  content: '### ';
+  color: var(--ink-3);
+}
+:root[data-look='terminal'] .lesson-section li::marker {
+  color: var(--amber);
+}
+:root[data-look='terminal'] .lesson-section ul:not([class]) {
+  list-style: '- ';
+}
+
+:root[data-look='terminal'] .callout {
+  border: 1px solid var(--cyan);
+  background: none;
+  padding: 0.9rem 1rem 0.25rem;
+  position: relative;
+  margin-top: 2rem;
+}
+:root[data-look='terminal'] .callout-label {
+  position: absolute;
+  top: -0.8rem;
+  left: 0.75rem;
+  padding: 0 0.4rem;
+  background: var(--paper);
+  font: 400 1.37rem/1.4 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .callout-warn {
+  border-color: var(--amber);
+  background: none;
+}
+:root[data-look='terminal'] .callout-warn .callout-label {
+  color: var(--amber);
+}
+:root[data-look='terminal'] .callout-deep {
+  border-color: var(--magenta);
+}
+:root[data-look='terminal'] .callout-deep .callout-label {
+  color: var(--magenta);
+}
+
+:root[data-look='terminal'] .grid-table th,
+:root[data-look='terminal'] .memory th {
+  font: 400 1.3rem/1.3 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cyan);
+  border-bottom: 1px solid var(--cyan);
+}
+:root[data-look='terminal'] .grid-table td,
+:root[data-look='terminal'] .memory td {
+  border-color: var(--form-soft);
+}
+:root[data-look='terminal'] .memory .m-addr {
+  color: var(--magenta);
+}
+:root[data-look='terminal'] .memory tr.is-hot td:not(.m-addr) {
+  background: var(--hot);
+}
+:root[data-look='terminal'] figcaption {
+  color: var(--tk-com);
+}
+:root[data-look='terminal'] figcaption::before {
+  content: '// ';
+}
+
+/* code: a dark pane with a dim gutter, no paper rules */
+:root[data-look='terminal'] .code-sheet {
+  border: 1px solid var(--form-soft);
+  background: var(--paper-sunk);
+}
+:root[data-look='terminal'] .code-gutter {
+  background: none;
+  color: var(--ink-3);
+  border-right: 1px solid var(--form-soft);
+}
+:root[data-look='terminal'] .code-body {
+  background-image: none;
+}
+:root[data-look='terminal'] .code-body code {
+  color: var(--ink);
+}
+:root[data-look='terminal'] .editor {
+  background: var(--paper-sunk);
+  border-color: var(--form);
+}
+:root[data-look='terminal'] .editor:focus-within {
+  box-shadow: none;
+  outline: 1px solid var(--form);
+}
+:root[data-look='terminal'] .editor-input {
+  caret-color: var(--form);
+}
+:root[data-look='terminal'] .tk-com {
+  font-style: normal;
+}
+
+:root[data-look='terminal'] .field-label,
+:root[data-look='terminal'] .console-label {
+  font: 400 1.3rem/1.3 var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .console,
+:root[data-look='terminal'] .console-out {
+  background: var(--paper-sunk);
+  border-color: var(--form-soft);
+}
+:root[data-look='terminal'] .stdin-input,
+:root[data-look='terminal'] .predict-input {
+  background: var(--paper-sunk);
+  border-color: var(--form-soft);
+}
+:root[data-look='terminal'] .stdin-input:focus,
+:root[data-look='terminal'] .predict-input:focus {
+  border-color: var(--form);
+  box-shadow: none;
+}
+
+/* ---------- exercises: TUI windows with the title in the border ---------- */
+
+:root[data-look='terminal'] .exercise {
+  position: relative;
+  margin: 3rem 0;
+  border: 1px solid var(--form);
+  border-radius: 0;
+  background: none;
+  box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--form-soft);
+  padding-top: 0.5rem;
+}
+:root[data-look='terminal'] .ex-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.5rem;
+  width: fit-content;
+  max-width: calc(100% - 4.5rem);
+  margin: -1.45rem 0 0 0.9rem;
+  padding: 0 0.5rem;
+  background: var(--paper);
+  border: 0;
+  font: 400 1.49rem/1.6 var(--font-pixel);
+}
+:root[data-look='terminal'] .ex-seq {
+  display: inline;
+  padding: 0;
+  background: none;
+  color: var(--magenta);
+  font: inherit;
+}
+:root[data-look='terminal'] .ex-type {
+  display: inline;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--cyan);
+}
+:root[data-look='terminal'] .ex-type::before,
+:root[data-look='terminal'] .ex-title::before {
+  content: '─ ';
+  color: var(--form);
+}
+:root[data-look='terminal'] .ex-title {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--form);
+}
+:root[data-look='terminal'] .ex-title code {
+  color: var(--amber);
+}
+:root[data-look='terminal'] .ex-head .ex-mark {
+  position: absolute;
+  top: -0.7rem;
+  right: 0.9rem;
+  margin: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  background: var(--paper);
+  border: 1px solid var(--form);
+  color: var(--on-form);
+}
+:root[data-look='terminal'] .exercise.is-solved {
+  border-color: var(--form-strong);
+}
+:root[data-look='terminal'] .exercise.is-solved .ex-mark {
+  background: var(--form);
+}
+:root[data-look='terminal'] .ex-prompt,
+:root[data-look='terminal'] .ex-work,
+:root[data-look='terminal'] .ex-explain {
+  padding-inline: 1.25rem;
+}
+:root[data-look='terminal'] .ex-prompt {
+  padding-top: 0.75rem;
+}
+:root[data-look='terminal'] .ex-feedback.is-pass {
+  color: var(--form);
+  background: var(--form-faint);
+  border-color: var(--form);
+}
+:root[data-look='terminal'] .ex-feedback.is-error {
+  color: var(--red);
+  background: var(--red-soft);
+}
+:root[data-look='terminal'] .option label {
+  border-color: var(--form-soft);
+  background: none;
+}
+:root[data-look='terminal'] .option label:hover,
+:root[data-look='terminal'] .option label:has(input:checked) {
+  border-color: var(--form);
+  background: var(--form-faint);
+}
+:root[data-look='terminal'] .blank {
+  background: var(--paper-sunk);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+/* ---------- outline pane (tmux split on the right) ---------- */
+
+:root[data-look='terminal'] .ident {
+  grid-column: 2;
+  top: calc(var(--mast-h) + 1.5rem);
+  max-height: calc(100vh - var(--mast-h) - var(--t-shell-h) - 3rem);
+  margin: 2rem 1rem 0 0;
+  padding: 1.25rem 0.9rem 0.75rem;
+  border: 1px solid var(--form-soft);
+  font-size: 0.85rem;
+  position: sticky;
+  overflow: visible auto;
+}
+:root[data-look='terminal'] .ident-block {
+  border-top: 0;
+  padding-top: 0;
+}
+:root[data-look='terminal'] .ident-block .field-label::before {
+  content: '$ ls ';
+  color: var(--form);
+}
+:root[data-look='terminal'] .toc a,
+:root[data-look='terminal'] .docs a {
+  border-bottom: 0;
+  padding: 0.2rem 0 0.2rem 1.1rem;
+  position: relative;
+  color: var(--ink-2);
+}
+:root[data-look='terminal'] .toc a::before {
+  content: '·';
+  position: absolute;
+  left: 0.2rem;
+  color: var(--ink-3);
+}
+:root[data-look='terminal'] .toc a.is-current {
+  color: var(--form);
+  font-weight: 700;
+}
+:root[data-look='terminal'] .toc a.is-current::before {
+  content: '>';
+  color: var(--amber);
+}
+:root[data-look='terminal'] .tally-box {
+  border-color: var(--form);
+}
+:root[data-look='terminal'] .docs a {
+  color: var(--cyan);
+}
+
+/* ---------- pager: [ ← prev ] [ next → ] ---------- */
+
+:root[data-look='terminal'] .pager {
+  border-top: 1px dashed var(--form-soft);
+}
+:root[data-look='terminal'] .pager-link {
+  border: 1px solid var(--form);
+  color: var(--form);
+}
+:root[data-look='terminal'] .pager-link:hover {
+  background: var(--form);
+  color: var(--on-form);
+}
+:root[data-look='terminal'] .pager-link:hover .field-label {
+  color: var(--on-form);
+}
+:root[data-look='terminal'] .pager-title {
+  font: 400 1.56rem/1.2 var(--font-pixel);
+}
+:root[data-look='terminal'] .pager-link .icon {
+  display: none;
+}
+:root[data-look='terminal'] .pager-link:not(.is-next) .field-label::before {
+  content: '← ';
+}
+:root[data-look='terminal'] .pager-link.is-next .field-label::after {
+  content: ' →';
+}
+
+/* ---------- playground ---------- */
+
+:root[data-look='terminal'] .playground .lesson-head::before {
+  content: 'visitor@c-ground-up:~/play$ vim playground.c';
+  display: block;
+  font: 400 1.49rem/1.4 var(--font-pixel);
+  color: var(--form);
+  margin-bottom: 1rem;
+}
+:root[data-look='terminal'] .playground .display::before {
+  content: '# ';
+  color: var(--ink-3);
+}
+
+/* ---------- status line ---------- */
+
+.t-status {
+  display: none;
+}
+:root[data-look='terminal'] .t-status {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  border-top: 1px solid var(--form);
+  font-family: var(--font-pixel);
+  line-height: 1.2;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-height: 1.75rem;
+  background: var(--form-faint);
+  color: var(--ink-2);
+  font-size: 1.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+:root[data-look='terminal'] .t-status > span {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+}
+:root[data-look='terminal'] .t-file {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block !important;
+  line-height: 1.75rem;
+  color: var(--ink);
+  background: var(--form-soft);
+}
+:root[data-look='terminal'] .t-gap {
+  flex: 1;
+  padding: 0 !important;
+}
+:root[data-look='terminal'] .t-st {
+  border-left: 1px solid var(--form-soft);
+}
+:root[data-look='terminal'] .t-clang.is-ready {
+  color: var(--form);
+}
+:root[data-look='terminal'] .t-clang.is-loading {
+  color: var(--amber);
+}
+:root[data-look='terminal'] .t-clang.is-error {
+  color: var(--red);
+}
+:root[data-look='terminal'] .t-pos {
+  color: var(--ink);
+}
+
+
+/* ---------- narrower screens ---------- */
+
+@media (max-width: 1280px) {
+  :root[data-look='terminal'] .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :root[data-look='terminal'] .ident {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  :root[data-look='terminal'] {
+    --mast-h: 2.25rem;
+  }
+  :root[data-look='terminal'] .t-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 1rem;
+  }
+  :root[data-look='terminal'] .t-row-title {
+    grid-column: 1;
+    grid-row: 2;
+    padding-left: 1.5ch;
+    color: var(--ink-2);
+  }
+  :root[data-look='terminal'] .t-row-min {
+    display: none;
+  }
+  :root[data-look='terminal'] .t-st-part {
+    display: none !important;
+  }
+}
+
+@media (max-width: 700px) {
+  :root[data-look='terminal'] .t-fetch {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :root[data-look='terminal'] .t-art {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+  }
+  :root[data-look='terminal'] .t-chip {
+    font-size: 0.72rem;
+  }
+  :root[data-look='terminal'] .t-logo {
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 560px) {
+  :root[data-look='terminal'] body {
+    font-size: 0.875rem;
+  }
+  :root[data-look='terminal'] .t-session,
+  /* phones: the lesson window is just its number, so home / lesson / play all fit */
+  :root[data-look='terminal'] .t-win-long {
+    display: none;
+  }
+  :root[data-look='terminal'] a.t-bracket {
+    display: none;
+  }
+  :root[data-look='terminal'] .t-fact {
+    grid-template-columns: 7.25rem minmax(0, 1fr);
+  }
+  :root[data-look='terminal'] .t-clang,
+  :root[data-look='terminal'] .t-pos {
+    display: none !important;
+  }
+  :root[data-look='terminal'] .ex-prompt,
+  :root[data-look='terminal'] .ex-work,
+  :root[data-look='terminal'] .ex-explain {
+    padding-inline: 0.75rem;
+  }
+  :root[data-look='terminal'] .ex-head {
+    margin-left: 0.5rem;
+    font-size: 1.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-look='terminal'] body::after {
+    display: none;
+  }
+}

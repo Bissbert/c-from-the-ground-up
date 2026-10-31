@@ -6,11 +6,11 @@ const listeners = new Set();
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) return { done: {}, drafts: {}, last: null, theme: null, ...JSON.parse(raw) };
+    if (raw) return { done: {}, drafts: {}, last: null, ...JSON.parse(raw) };
   } catch {
     /* storage unavailable */
   }
-  return { done: {}, drafts: {}, last: null, theme: null };
+  return { done: {}, drafts: {}, last: null };
 }
 
 const state = load();
@@ -49,11 +49,6 @@ export const progress = {
   setLast(lessonId, sectionId) {
     if (state.last && state.last.lesson === lessonId && state.last.section === sectionId) return;
     state.last = { lesson: lessonId, section: sectionId, at: Date.now() };
-    save();
-  },
-  theme: () => state.theme,
-  setTheme(t) {
-    state.theme = t;
     save();
   },
   doneCount(ids) {

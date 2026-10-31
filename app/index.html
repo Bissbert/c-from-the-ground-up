@@ -1,22 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-look="terminal">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>C, from the ground up</title>
     <meta name="description" content="A beginner's course in C programming: from variables and memory addresses to pointers, structs and linked lists, with exercises checked by a real compiler in your browser." />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0c0b" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="fonts/AtkinsonHyperlegibleNext-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="fonts/AtkinsonHyperlegibleMono-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/JetBrainsMono.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/VT323-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <script>
-      try {
-        const s = JSON.parse(localStorage.getItem('c-ground-up:v1') || '{}');
-        if (s.theme) document.documentElement.dataset.theme = s.theme;
-      } catch {}
-    </script>
+    <link rel="stylesheet" href="css/terminal.css" />
   </head>
   <body>
     <a class="skip" href="#view">Skip to content</a>
@@ -32,7 +28,6 @@
           <div class="field field-card"><dt>Card</dt><dd id="f-card">—</dd></div>
           <div class="field field-compiler"><dt>Compiler</dt><dd id="f-compiler" data-state="idle">Idle</dd></div>
         </dl>
-        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch theme"></button>
       </div>
       <div class="ruler" id="ruler" aria-hidden="true"></div>
     </header>

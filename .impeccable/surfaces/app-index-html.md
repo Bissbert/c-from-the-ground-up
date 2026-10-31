@@ -9,18 +9,14 @@ related_targets: []
 
 Mode: Read (lessons) with an Operate core (editor, run, tests). Audience: one total beginner at a laptop, evening at a home desk; course in English. Job: read a short theory section, then immediately solve the exercise under it, checked by a real compiler. Constraint: local, offline, no accounts; ~105 MB compiler loads from localhost with visible progress. User was away: direction chosen unattended from the roll (assigned candidate), no decision page served.
 
-Grounded list (by resonance): 1 K&R book cover (literal rut), 2 squared school exercise book with teacher's pen, 3 component datasheet (memory maps, register tables), 4 post-office box wall, 5 SBB timetable book, 6 IBM/FORTRAN 80-column coding form, 7 library card catalogue.
-
 ## Direction contract
 
-THESIS: The course is a stack of programming coding sheets: every lesson is a numbered form, every memory cell a ruled box with its address in the sequence field. Refuses the dark IDE-with-neon-accent tutorial look and the cream-and-serif textbook.
+Replaced on 2026-10-31. The user compared four full redesigns (Steeple, Poster, Crystal, Terminal) and chose Terminal, after bissbert.ch. They then asked for the working prompt to be removed because it might confuse beginners. The previous coding-form direction is retired; DESIGN.md holds the current system.
 
-OWN-WORLD: Cool white form paper, printed form-green ink for all frame furniture (masthead, column rulers, field labels, box rules, lesson rail), pale green grid only where a form would print boxes (code, memory, editor gutter). Graphite for writing (body, code). Condensed caps for printed form labels (Archivo, narrow width); Atkinson Hyperlegible Next for reading; Atkinson Hyperlegible Mono for code. Red pencil only for compiler errors; state is a mark, not a hue: checked box solved, pencil tick partial, folded corner where you stopped.
+THESIS: The course is one calm shell session on a phosphor terminal. A tmux window bar sits on top, the home page is a neofetch print-out, each lesson opens with `cat NN-slug.md`, and a vim-style status line sits at the bottom. It is a costume, not a shell: nothing accepts typed commands.
 
-STORY: The learner sees where they are on the course sheet, reads one section, solves the form below it, sees the real compiler's verdict, moves on.
+OWN-WORLD: Near-black screen with phosphor green for the frame and ANSI cyan, amber, magenta and red, each with one meaning. VT323 for the frame and headings, JetBrains Mono for reading and code. Square corners, a scanline overlay, no glow. Dark only.
 
-FIRST VIEWPORT: Left: lesson rail styled as the form's statement-number column, 18 numbered rows with state marks. Top: masthead as form header boxes (PROGRAM / LESSON / CARD n OF 18 / progress) with a 1-80 column ruler under it. Centre: lesson title, subtitle, goals, then the reading column (~68ch). Right margin on wide screens: section contents and docs references, set like the form's identification field.
+STORY: The learner sees where they are in the window bar and status line, reads one section, solves the exercise below it, sees the real compiler's verdict and moves on.
 
-FORM: coding form, position 6 on the list; seed:84badf7ace798211. Raises: from cutting-bench (declined) — state is a mark, not a hue, and the place you stopped is flagged on return; from emission-line rail (declined) — everything registers against one column ruler; from catalog sleeve (declined) — every artifact carries its sequence number (lesson.exercise, e.g. 05.3).
-
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+FIRST VIEWPORT: On home, the neofetch art on the left and the course facts on the right, with "Continue NN" and "Playground" links and the `ls -l` lesson list below. On a lesson, the prompt line, the title, the facts, a TODO list of goals, then the reading column. On wide screens an outline pane on the right holds `ls in this lesson` and `ls c reference`.
