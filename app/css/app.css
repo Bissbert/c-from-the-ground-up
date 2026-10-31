@@ -3,34 +3,34 @@
    these defaults for :root[data-look='terminal']. */
 
 :root {
-  --paper: #f4f6f1;
-  --paper-raised: #fafbf8;
-  --paper-sunk: #edf2ec;
-  --form: #1f6b4f;
-  --form-strong: #17533d;
-  --form-soft: #cfe3d6;
-  --form-faint: #e3eee6;
-  --ink: #2b2e2c;
-  --ink-2: #48544d;
-  --ink-3: #5c6a62;
-  --mast-bg: #1f6b4f;
-  --mast-ink: #f4f6f1;
-  --mast-ink-2: #c4e0cf;
-  --mast-rule: #3f8a6c;
-  --on-form: #f4f6f1;
-  --red: #b3261e;
-  --red-soft: #f8e4e1;
-  --warn: #855600;
-  --warn-soft: #f5ead2;
-  --hot: #fff2b0;
+  --paper: #0b0c0b;
+  --paper-raised: #111411;
+  --paper-sunk: #070807;
+  --form: #3ddc4a;
+  --form-strong: #7cf08a;
+  --form-soft: #24402a;
+  --form-faint: #142017;
+  --ink: #dbe9d8;
+  --ink-2: #b2c7af;
+  --ink-3: #8ba487;
+  --mast-bg: #111411;
+  --mast-ink: #dbe9d8;
+  --mast-ink-2: #b2c7af;
+  --mast-rule: #24402a;
+  --on-form: #071007;
+  --red: #ff5f56;
+  --red-soft: #2e1210;
+  --warn: #ffb000;
+  --warn-soft: #261d07;
+  --hot: #3b3305;
 
-  --tk-kw: #17533d;
-  --tk-type: #245b7d;
-  --tk-str: #7a4a12;
-  --tk-num: #8a3460;
-  --tk-com: #66746c;
-  --tk-pre: #5d4596;
-  --tk-fn: #2b2e2c;
+  --tk-kw: #c879ff;
+  --tk-type: #2cb2ff;
+  --tk-str: #ffb000;
+  --tk-num: #ff7ab8;
+  --tk-com: #7c977a;
+  --tk-pre: #22d3c5;
+  --tk-fn: #dbe9d8;
 
   --font-read: 'JetBrains Mono', ui-monospace, monospace;
   --font-code: 'JetBrains Mono', ui-monospace, monospace;
@@ -46,7 +46,7 @@
   --radius: 3px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 /* ---------- base ---------- */
